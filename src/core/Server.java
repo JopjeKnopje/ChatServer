@@ -3,34 +3,40 @@ package core;
 import config.STATICS;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 public class Server {
 
     private final boolean running = true;
-    private ServerSocket serverSocket;
-    private Thread listener;
+
+    private int port = 5555;
 
 
     public Server() {
+
+        Listener listener = new Listener(STATICS.PORT);
+        // Start the listener
+        Thread listenerThread = new Thread(listener);
+        listenerThread.start();
+
+
+
+        ClientHandler clientHandler = new ClientHandler(listener);
         try {
-            serverSocket = new ServerSocket(STATICS.PORT); // Listening socket
+            clientHandler.handle();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-    }
-
-    public void listen() {
+        // blocks the main thread until the thread has finished
         try {
-            while (running) {
-                Socket connectionSocket = serverSocket.accept(); // get the connectionSocket
-            }
-        } catch (IOException e) {
+            listenerThread.join();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        System.out.println("Thread " + Thread.currentThread() + " ended");
 
     }
+
+
+
 }
