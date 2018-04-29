@@ -18,8 +18,6 @@ public class Server {
         Thread listenerThread = new Thread(listener);
         listenerThread.start();
 
-
-
         ClientHandler clientHandler = new ClientHandler(listener);
         try {
             clientHandler.handle();
